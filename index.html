@@ -31,6 +31,14 @@
         <div id="memo-container" class="space-y-6"></div>
     </div>
 
+    <!-- お買い物かご（固定表示） -->
+    <div id="cart" class="fixed bottom-24 left-0 right-0 bg-white/95 backdrop-blur border-t border-slate-200 p-4 shadow-inner z-40">
+        <div class="max-w-md mx-auto">
+            <h2 class="text-xl font-bold mb-2">🧺 お買い物かご</h2>
+            <ul id="cart-list" class="text-lg space-y-1 text-slate-800"></ul>
+        </div>
+    </div>
+
     <!-- 画面一番下の固定ボタン -->
     <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-slate-200 p-4 shadow-xl z-50">
         <div class="max-w-md mx-auto">
@@ -113,6 +121,21 @@
                 btn.classList.remove('bg-green-600', 'border-green-700', 'text-white', 'shadow-md');
                 btn.classList.add('bg-white', 'border-slate-300', 'text-slate-800');
             }
+
+            updateCart();
+        }
+
+        // お買い物かごの更新処理
+        function updateCart() {
+            const cartList = document.getElementById('cart-list');
+            cartList.innerHTML = '';
+
+            const selectedButtons = document.querySelectorAll('.item-btn.selected');
+            selectedButtons.forEach(btn => {
+                const li = document.createElement('li');
+                li.textContent = '・' + btn.dataset.item;
+                cartList.appendChild(li);
+            });
         }
 
         // コピー＆LINE起動処理

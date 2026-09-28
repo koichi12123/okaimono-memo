@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お母さんのかいものメモ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-size: 18px;
+            background-color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .item-btn {
+            min-height: 64px;
+            font-size: 19px;
+            font-weight: bold;
+            transition: all 0.15s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 pb-36">
+    <div class="max-w-md mx-auto p-4">
+        <!-- ヘッダー -->
+        <header class="text-center py-3 mb-4">
+            <h1 class="text-3xl font-extrabold text-slate-900">🛒 かいものメモ</h1>
+            <p class="text-slate-600 mt-1 font-medium">ほしいものをタッチしてね</p>
+        </header>
+
+        <!-- カテゴリー・品物リスト -->
+        <div id="memo-container" class="space-y-6"></div>
+    </div>
+
+    <!-- 画面一番下の固定ボタン -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-slate-200 p-4 shadow-xl z-50">
+        <div class="max-w-md mx-auto">
+            <button onclick="copyAndOpenLine()" class="w-full bg-green-600 hover:bg-green-700 text-white font-extrabold text-2xl py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform">
+                <span>📋</span>
+                <span>コピーしてLINEをひらく</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const categories = [
+            {
+                name: "🥬 やさい",
+                color: "bg-emerald-50 border-emerald-200",
+                headerColor: "text-emerald-900",
+                items: ["ねぎ", "レタス", "サニーレタス", "なすび", "おくら", "きのこ類", "にんじん", "だいこん", "ブロッコリー", "バナナ"]
+            },
+            {
+                name: "❄️ れいとう・肉",
+                color: "bg-sky-50 border-sky-200",
+                headerColor: "text-sky-900",
+                items: ["冷凍ぎょうざ", "豚肉", "牛肉", "鶏肉", "お魚"]
+            },
+            {
+                name: "🍳 まいにち",
+                color: "bg-amber-50 border-amber-200",
+                headerColor: "text-amber-900",
+                items: ["卵", "パン", "豆腐", "納豆", "牛乳"]
+            },
+            {
+                name: "🧂 調味料・だし",
+                color: "bg-orange-50 border-orange-200",
+                headerColor: "text-orange-900",
+                items: ["ゴマタレ", "本だし", "追いがつおだし", "カレー粉", "かつおぶし", "みそ"]
+            },
+            {
+                name: "🧻 水・日用品",
+                color: "bg-purple-50 border-purple-200",
+                headerColor: "text-purple-900",
+                items: ["洗口液", "お水", "トイレットペーパー", "食器洗剤", "洗濯洗剤"]
+            }
+        ];
+
+        const container = document.getElementById('memo-container');
+
+        // リストの動的生成
+        categories.forEach(cat => {
+            const section = document.createElement('div');
+            section.className = `p-4 rounded-2xl border-2 ${cat.color} shadow-sm`;
+            
+            const title = document.createElement('h2');
+            title.className = `text-2xl font-extrabold mb-3 ${cat.headerColor}`;
+            title.textContent = cat.name;
+            section.appendChild(title);
+
+            const grid = document.createElement('div');
+            grid.className = 'grid grid-cols-2 gap-3';
+
+            cat.items.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'item-btn bg-white border-2 border-slate-300 rounded-2xl p-3 text-slate-800 flex items-center justify-center text-center shadow-sm';
+                btn.textContent = item;
+                btn.dataset.item = item;
+                btn.onclick = () => toggleItem(btn);
+                grid.appendChild(btn);
+            });
+
+            section.appendChild(grid);
+            container.appendChild(section);
+        });
+
+        // タップ時の切り替え処理
+        function toggleItem(btn) {
+            btn.classList.toggle('selected');
+            if (btn.classList.contains('selected')) {
+                btn.classList.remove('bg-white', 'border-slate-300', 'text-slate-800');
+                btn.classList.add('bg-green-600', 'border-green-700', 'text-white', 'shadow-md');
+            } else {
+                btn.classList.remove('bg-green-600', 'border-green-700', 'text-white', 'shadow-md');
+                btn.classList.add('bg-white', 'border-slate-300', 'text-slate-800');
+            }
+        }
+
+        // コピー＆LINE起動処理
+        function copyAndOpenLine() {
+            const selectedButtons = document.querySelectorAll('.item-btn.selected');
+            if (selectedButtons.length === 0) {
+                alert('ほしいものが選ばれていません。品物をタッチして選んでね！');
+                return;
+            }
+
+            let text = '■ かいものおねがい';
+            selectedButtons.forEach(btn => {
+                text += '\n・' + btn.dataset.item;
+            });
+
+            navigator.clipboard.writeText(text).then(() => {
+                // LINEアプリを開く
+                window.location.href = 'https://line.me';
+            }).catch(err => {
+                alert('コピーに失敗しました。');
+            });
+        }
+    </script>
+</body>
+</html>
